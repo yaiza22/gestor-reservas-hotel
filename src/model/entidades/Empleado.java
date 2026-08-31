@@ -8,9 +8,9 @@ public class Empleado extends Usuario {
     private Rol rol;
 
 
-    public Empleado(String id, TipoDocIdentidad tipoDocIdentidad, String numDocIdentidad, String nombre, String telefono, String correo, String password) {
+    public Empleado(String id, TipoDocIdentidad tipoDocIdentidad, String numDocIdentidad, String nombre, String telefono, String correo, String password, Rol rol) {
         super(id, tipoDocIdentidad, numDocIdentidad, nombre, telefono, correo, password);
-        this.rol = rol;
+        this.rol = this.rol;
     }
     //-----------------------------------------
     //Métodos
