@@ -1,25 +1,22 @@
 package view;
 
-import controller.HabitacionController;
-import controller.ReservaController;
-import model.entidades.Habitacion;
-import model.entidades.Reserva;
+import controller.*;
+import model.entidades.*;
 import model.enums.Temporada;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
 public class PanelReservas extends JPanel {
-
     private final ReservaController reservaController;
     private final HabitacionController habitacionController;
     private final DefaultTableModel modeloTabla;
     private final JTable tabla;
-
     private final JTextField campoId = new JTextField();
     private final JTextField campoClienteId = new JTextField();
     private final JTextField campoHabitacionesId = new JTextField();
@@ -36,7 +33,7 @@ public class PanelReservas extends JPanel {
         setLayout(new BorderLayout(10, 10));
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        modeloTabla = new DefaultTableModel(new Object[]{"ID", "Cliente", "Habitacion", "Inicio", "Fin", "Estado", "Precio"}, 0) {
+        modeloTabla = new DefaultTableModel(new Object[]{"ID", "Cliente", "Habitaciones", "Inicio", "Fin", "Estado", "Precio"}, 0) {
             @Override
             public boolean isCellEditable(int row, int column) { return false; }
         };
@@ -53,13 +50,27 @@ public class PanelReservas extends JPanel {
 
         panel.add(new JLabel("ID (numero):"));   panel.add(campoId);
         panel.add(new JLabel("Cliente ID:"));    panel.add(campoClienteId);
+        panel.add(new JLabel("Fecha inicio:"));  panel.add(campoFechaInicio);
+        panel.add(new JLabel("Fecha fin:"));     panel.add(campoFechaFin);
+        panel.add(new JLabel("Huespedes:"));     panel.add(campoCantHuespedes);
+        panel.add(new JLabel("Temporada:"));     panel.add(campoTemporada);
+
+        JButton btnCrear = new JButton("Crear reserva");
+        JButton btnConfirmar = new JButton("Confirmar");
+        JButton btnCheckin = new JButton("Check-in");
+        JButton btnCheckout = new JButton("Check-out");
+        JButton btnCancelar = new JButton("Cancelar");
+        JButton btnEliminar = new JButton("Eliminar");
+        JButton btnAgregarHabitacion = new JButton("+");
+        JButton btnEliminarHabitacion = new JButton("Eliminar");
+
         // --- NUEVO: Sub-panel para empaquetar el Input + Botones de Habitación ---
         JPanel panelAccionesHabitacion = new JPanel(new BorderLayout(2, 0));
         panelAccionesHabitacion.add(campoHabitacionesId, BorderLayout.CENTER);
 
         JPanel panelBotonesLista = new JPanel(new GridLayout(1, 2, 2, 0));
-        panelBotonesLista.add(btnAgregarHabitaciones);
-        panelBotonesLista.add(btnEliminarHabitaciones);
+        panelBotonesLista.add(btnAgregarHabitacion);
+        panelBotonesLista.add(btnEliminarHabitacion);
         panelAccionesHabitacion.add(panelBotonesLista, BorderLayout.EAST);
 
         // Agregamos la etiqueta y el sub-panel al GridLayout
@@ -82,31 +93,17 @@ public class PanelReservas extends JPanel {
             }
             campoHabitacionesId.requestFocus();
         };
-        btnAgregarHabitaciones.addActionListener(accionAgregar);
+        btnAgregarHabitacion.addActionListener(accionAgregar);
         campoHabitacionesId.addActionListener(accionAgregar); // Enter en el teclado
 
-        btnEliminarHabitaciones.addActionListener(e -> {
+        btnEliminarHabitacion.addActionListener(e -> {
             int index = listaHabitacionesVisual.getSelectedIndex();
             if (index != -1) {
                 modeloListaHabitaciones.remove(index);
             }
         });
         // --- Fin de la sección de habitaciones ---
-        panel.add(new JLabel("Fecha inicio:"));  panel.add(campoFechaInicio);
-        panel.add(new JLabel("Fecha fin:"));     panel.add(campoFechaFin);
-        panel.add(new JLabel("Huespedes:"));     panel.add(campoCantHuespedes);
-        panel.add(new JLabel("Temporada:"));     panel.add(campoTemporada);
 
-
-
-        JButton btnCrear = new JButton("Crear reserva");
-        JButton btnConfirmar = new JButton("Confirmar");
-        JButton btnCheckin = new JButton("Check-in");
-        JButton btnCheckout = new JButton("Check-out");
-        JButton btnCancelar = new JButton("Cancelar");
-        JButton btnEliminar = new JButton("Eliminar");
-        JButton btnAgregarHabitacion = new JButton("+");
-        JButton btnEliminarHabitacion = new JButton("Eliminar");
 
         btnCrear.addActionListener(e -> crear());
         btnConfirmar.addActionListener(e -> cambiarEstado(Reserva::confirmar));
@@ -131,12 +128,29 @@ public class PanelReservas extends JPanel {
 
     private void crear() {
         try {
-            String habitacionId = campoHabitacionesId.getText().trim();
-            Habitacion habitacion = habitacionController.buscar(habitacionId);
-            if (habitacion == null) {
-                JOptionPane.showMessageDialog(this, "No existe una habitacion con ese ID.");
+            // 1. Validar que al menos se haya agregado una habitación a la lista
+            if (modeloListaHabitaciones.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Debes agregar al menos una habitación a la lista.");
                 return;
             }
+
+            // 2. Extraer los IDs de la lista visual a un List<String>
+            List<String> habitacionesId = new ArrayList<>();
+            for (int i = 0; i < modeloListaHabitaciones.getSize(); i++) {
+                habitacionesId.add(modeloListaHabitaciones.getElementAt(i));
+            }
+
+            // 3. Validar que todas las habitaciones de la lista existan en el controlador
+            List<Habitacion> habitacionesValidadas = new ArrayList<>();
+            for (String id : habitacionesId) {
+                Habitacion habitacion = habitacionController.buscar(id);
+                if (habitacion == null) {
+                    JOptionPane.showMessageDialog(this, "No existe una habitación con el ID: " + id);
+                    return;
+                }
+                habitacionesValidadas.add(habitacion);
+            }
+
             Reserva reserva = new Reserva(
                     Integer.parseInt(campoId.getText().trim()),
                     LocalDate.parse(campoFechaInicio.getText().trim()),
@@ -144,9 +158,10 @@ public class PanelReservas extends JPanel {
                     Integer.parseInt(campoCantHuespedes.getText().trim()),
                     (Temporada) campoTemporada.getSelectedItem(),
                     campoClienteId.getText().trim(),
-                    habitacionId
+                    habitacionesId
             );
-            reservaController.crear(reserva, habitacion);
+            reservaController.crear(reserva, habitacionesValidadas);
+            modeloListaHabitaciones.clear();
             refrescarTabla();
         } catch (IllegalStateException ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage(), "No disponible", JOptionPane.WARNING_MESSAGE);

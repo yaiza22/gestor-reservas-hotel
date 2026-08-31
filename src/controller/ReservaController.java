@@ -13,7 +13,7 @@ public class ReservaController {
         this.facade = facade;
     }
 
-    public Reserva crear(Reserva reserva, Habitacion habitacion) { return facade.registrarReserva(reserva, habitacion); }
+    public Reserva crear(Reserva reserva, List<Habitacion> habitaciones) { return facade.registrarReserva(reserva, habitaciones); }
     public Reserva buscar(int id) { return facade.buscarReserva(id); }
     public List<Reserva> listar() { return facade.listarReservas(); }
     public boolean actualizar(Reserva reserva) { return facade.actualizarReserva(reserva); }
