@@ -76,6 +76,7 @@ public abstract class Usuario {
     public void setCorreo(String correo) {
         this.correo = correo;
     }
+    public String getTipoUsuario() { return "CLIENTE"; }
 
     @Override
     public String toString() {
