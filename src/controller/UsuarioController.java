@@ -4,9 +4,7 @@ import model.entidades.Usuario;
 import model.facade.IReservasFacade;
 import java.util.List;
 
-// El Controller solo conoce la Facade (por su interfaz). No sabe que existe
-// un DAO, ni una base de datos, ni memoria. Eso es justamente lo que
-// desacopla la Vista del mecanismo de persistencia.
+
 public class UsuarioController {
     private final IReservasFacade facade;
 
