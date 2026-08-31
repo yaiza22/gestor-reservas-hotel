@@ -23,6 +23,16 @@ public abstract class Usuario {
         this.password = password;
     }
 
+    public boolean iniciarSesion(String password) {
+        return this.password != null && this.password.equals(password);
+    }
+
+    public void actualizarDatos(String nombre, String telefono, String correo) {
+        this.nombre = nombre;
+        this.telefono = telefono;
+        this.correo = correo;
+    }
+
     // Getters y setters
     public String getId() {
         return id;
@@ -66,6 +76,10 @@ public abstract class Usuario {
     public void setCorreo(String correo) {
         this.correo = correo;
     }
+    public String getTipoUsuario() { return "CLIENTE"; }
 
-    
+    @Override
+    public String toString() {
+        return nombre + " (" + tipoDocIdentidad + ". " + numDocIdentidad + ")";
+    }
 }
