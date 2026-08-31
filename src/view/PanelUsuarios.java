@@ -8,6 +8,7 @@ import model.factory.*;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.util.List;
 
 public class PanelUsuarios extends JPanel {
     private final UsuarioController controller;
