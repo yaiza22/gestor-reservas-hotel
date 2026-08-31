@@ -1,12 +1,12 @@
 package model.entidades;
 
+import model.enums.EstadoReserva;
+import model.enums.Temporada;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
-
-import model.enums.EstadoReserva;
-import model.enums.Temporada;
 
 public class Reserva {
     private int id;
@@ -35,6 +35,8 @@ public class Reserva {
         this.clienteId = clienteId;
         this.habitacionesId = habitacionesId;
     }
+
+
 
     public float calcularPrecio(Habitacion habitacion) {
         long noches = ChronoUnit.DAYS.between(fechaInicio, fechaFin);
@@ -142,4 +144,7 @@ public class Reserva {
     public String toString() {
         return "Reserva #" + id + " [" + fechaInicio + " a " + fechaFin + "] - " + estado;
     }
+
+
+
 }
