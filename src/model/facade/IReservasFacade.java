@@ -14,7 +14,7 @@ public interface IReservasFacade {
     boolean eliminarUsuario(String id);
 
     // Reserva
-    Reserva registrarReserva(Reserva reserva, Habitacion habitacion);
+    Reserva registrarReserva(Reserva reserva, List<Habitacion> habitaciones);
     Reserva buscarReserva(int id);
     List<Reserva> listarReservas();
     boolean actualizarReserva(Reserva reserva);

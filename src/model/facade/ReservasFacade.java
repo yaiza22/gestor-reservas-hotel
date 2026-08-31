@@ -33,11 +33,11 @@ public class ReservasFacade implements IReservasFacade {
     public boolean eliminarUsuario(String id) { return usuarioDAO.eliminar(id); }
 
     @Override
-    public Reserva registrarReserva(Reserva reserva, Habitacion habitacion) {
+    public Reserva registrarReserva(Reserva reserva, List<Habitacion> habitaciones) {
         if (!verificarDisponibilidad(reserva.getHabitacionesId(), reserva.getFechaInicio(), reserva.getFechaFin())) {
             throw new IllegalStateException("La habitacion no está disponible en esas fechas");
         }
-        reserva.calcularPrecio(habitacion);
+        reserva.calcularPrecio(habitaciones);
         return reservaDAO.crear(reserva);
     }
 

@@ -1,12 +1,12 @@
 package model.entidades;
 
+import model.enums.EstadoReserva;
+import model.enums.Temporada;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
-
-import model.enums.EstadoReserva;
-import model.enums.Temporada;
 
 public class Reserva {
     private int id;
@@ -23,9 +23,8 @@ public class Reserva {
     private List<String> habitacionesId;
 
     // Constructor
-    public Reserva(int id, LocalDate fechaInicio, LocalDate fechaFin, float precioTotal, EstadoReserva estado,
-                   LocalTime horaEntrada, LocalTime horaSalida, int cantHuespedes, Temporada temporada,
-                   String clienteId, List<String> habitacionesId) {
+    public Reserva(int id, LocalDate fechaInicio, LocalDate fechaFin, int cantHuespedes,
+                   Temporada temporada, String clienteId, List<String> habitacionesId) {
         this.id = id;
         this.fechaInicio = fechaInicio;
         this.fechaFin = fechaFin;
@@ -36,10 +35,16 @@ public class Reserva {
         this.habitacionesId = habitacionesId;
     }
 
-    public float calcularPrecio(Habitacion habitacion) {
+
+
+    public float calcularPrecio(List<Habitacion> habitaciones) {
         long noches = ChronoUnit.DAYS.between(fechaInicio, fechaFin);
         if (noches < 1) noches = 1;
-        this.precioTotal = habitacion.calcularPrecio(temporada) * noches;
+        float sumaTotal = 0;
+        for (Habitacion h : habitaciones) {
+            sumaTotal += h.calcularPrecio(temporada) * noches;
+        }
+        this.precioTotal = sumaTotal;
         return precioTotal;
     }
 
@@ -142,4 +147,7 @@ public class Reserva {
     public String toString() {
         return "Reserva #" + id + " [" + fechaInicio + " a " + fechaFin + "] - " + estado;
     }
+
+
+
 }
