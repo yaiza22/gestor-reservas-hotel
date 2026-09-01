@@ -13,8 +13,11 @@ public class Cliente extends Usuario{
     //-------------------------------------------------------------
     //Constructor
     //-------------------------------------------------------------
-    public Cliente(String id, TipoDocIdentidad tipoDocIdentidad, String numDocIdentidad, String nombre, String telefono, String correo, String password) {
+
+    public Cliente(String id, TipoDocIdentidad tipoDocIdentidad, String numDocIdentidad, String nombre, String telefono, String correo, String password, String nacionalidad, String paisResidencia) {
         super(id, tipoDocIdentidad, numDocIdentidad, nombre, telefono, correo, password);
+        this.nacionalidad = nacionalidad;
+        this.paisResidencia = paisResidencia;
     }
 
     //-------------------------------------------------------------
@@ -51,5 +54,10 @@ public class Cliente extends Usuario{
      */
     public void setPaisResidencia(String paisResidencia) {
         this.paisResidencia = paisResidencia;
+    }
+
+    @Override
+    public String getTipoUsuario() {
+        return "CLIENTE";
     }
 }

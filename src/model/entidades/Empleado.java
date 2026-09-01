@@ -21,4 +21,9 @@ public class Empleado extends Usuario {
 
     public Rol getRol() { return rol; }
     public void setRol(Rol rol) { this.rol = rol; }
+
+    @Override
+    public String getTipoUsuario() {
+        return "EMPLEADO";
+    }
 }
