@@ -64,27 +64,21 @@ public class PanelReservas extends JPanel {
         JButton btnAgregarHabitacion = new JButton("+");
         JButton btnEliminarHabitacion = new JButton("Eliminar");
 
-        // --- NUEVO: Sub-panel para empaquetar el Input + Botones de Habitación ---
+
         JPanel panelAccionesHabitacion = new JPanel(new BorderLayout(2, 0));
         panelAccionesHabitacion.add(campoHabitacionesId, BorderLayout.CENTER);
-
         JPanel panelBotonesLista = new JPanel(new GridLayout(1, 2, 2, 0));
         panelBotonesLista.add(btnAgregarHabitacion);
         panelBotonesLista.add(btnEliminarHabitacion);
         panelAccionesHabitacion.add(panelBotonesLista, BorderLayout.EAST);
 
-        // Agregamos la etiqueta y el sub-panel al GridLayout
         panel.add(new JLabel("Habitacion ID:"));
         panel.add(panelAccionesHabitacion);
-
-        // --- NUEVO: Agregar la lista visual debajo en el formulario ---
         panel.add(new JLabel("Lista Habitaciones:"));
         listaHabitacionesVisual.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         JScrollPane scrollLista = new JScrollPane(listaHabitacionesVisual);
         scrollLista.setPreferredSize(new Dimension(100, 50)); // Altura compacta para el Grid
         panel.add(scrollLista);
-
-        // Eventos para la lista de habitaciones
         java.awt.event.ActionListener accionAgregar = e -> {
             String id = campoHabitacionesId.getText().trim();
             if (!id.isEmpty() && !modeloListaHabitaciones.contains(id)) {
@@ -102,8 +96,6 @@ public class PanelReservas extends JPanel {
                 modeloListaHabitaciones.remove(index);
             }
         });
-        // --- Fin de la sección de habitaciones ---
-
 
         btnCrear.addActionListener(e -> crear());
         btnConfirmar.addActionListener(e -> cambiarEstado(Reserva::confirmar));
@@ -128,19 +120,16 @@ public class PanelReservas extends JPanel {
 
     private void crear() {
         try {
-            // 1. Validar que al menos se haya agregado una habitación a la lista
             if (modeloListaHabitaciones.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Debes agregar al menos una habitación a la lista.");
                 return;
             }
 
-            // 2. Extraer los IDs de la lista visual a un List<String>
             List<String> habitacionesId = new ArrayList<>();
             for (int i = 0; i < modeloListaHabitaciones.getSize(); i++) {
                 habitacionesId.add(modeloListaHabitaciones.getElementAt(i));
             }
 
-            // 3. Validar que todas las habitaciones de la lista existan en el controlador
             List<Habitacion> habitacionesValidadas = new ArrayList<>();
             for (String id : habitacionesId) {
                 Habitacion habitacion = habitacionController.buscar(id);
