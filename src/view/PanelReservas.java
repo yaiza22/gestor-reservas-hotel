@@ -155,7 +155,8 @@ public class PanelReservas extends JPanel {
         } catch (IllegalStateException ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage(), "No disponible", JOptionPane.WARNING_MESSAGE);
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, "Revisa los datos (formato de fecha: aaaa-mm-dd).",
+            //JOptionPane.showMessageDialog(this, "Revisa los datos (formato de fecha: aaaa-mm-dd).",
+            JOptionPane.showMessageDialog(this, ex.getMessage(),
                     "Error", JOptionPane.ERROR_MESSAGE);
         }
     }

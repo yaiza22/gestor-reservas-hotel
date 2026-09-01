@@ -24,6 +24,8 @@ public class PanelUsuarios extends JPanel {
     private final JPasswordField campoPassword = new JPasswordField();
     private final JComboBox<String> campoTipoUsuario = new JComboBox<>(new String[]{"CLIENTE", "EMPLEADO"});
     private final JComboBox<Rol> campoRol = new JComboBox<>(Rol.values());
+    private final JTextField campoNacionalidad = new JTextField();
+    private final JTextField campoPaisResidencia = new JTextField();
 
     public PanelUsuarios(UsuarioController controller) {
         this.controller = controller;
@@ -55,6 +57,8 @@ public class PanelUsuarios extends JPanel {
         panel.add(new JLabel("Password:"));           panel.add(campoPassword);
         panel.add(new JLabel("Tipo usuario:"));       panel.add(campoTipoUsuario);
         panel.add(new JLabel("Rol (si Empleado):"));  panel.add(campoRol);
+        panel.add(new JLabel("Nacionalidad (si cliente):"));       panel.add(campoNacionalidad);
+        panel.add(new JLabel("Pais Residencia (si cliente):"));       panel.add(campoPaisResidencia);
 
         JButton btnCrear = new JButton("Crear");
         JButton btnActualizar = new JButton("Actualizar");
@@ -89,7 +93,9 @@ public class PanelUsuarios extends JPanel {
                     campoTelefono.getText().trim(),
                     campoCorreo.getText().trim(),
                     new String(campoPassword.getPassword()),
-                    (Rol) campoRol.getSelectedItem()
+                    (Rol) campoRol.getSelectedItem(),
+                    campoNacionalidad.getText().trim(),
+                    campoPaisResidencia.getText().trim()
             );
             controller.crear(usuario);
             refrescarTabla();
