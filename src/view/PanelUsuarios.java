@@ -3,7 +3,6 @@ package view;
 import controller.*;
 import model.entidades.Usuario;
 import model.enums.*;
-import model.factory.*;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -84,8 +83,7 @@ public class PanelUsuarios extends JPanel {
 
     private void crearUsuario() {
         try {
-            Usuario usuario = UsuarioFactory.crear(
-                    (String) campoTipoUsuario.getSelectedItem(),
+            controller.crear((String) campoTipoUsuario.getSelectedItem(),
                     campoId.getText().trim(),
                     (TipoDocIdentidad) campoTipoDoc.getSelectedItem(),
                     campoNumDoc.getText().trim(),
@@ -97,7 +95,6 @@ public class PanelUsuarios extends JPanel {
                     campoNacionalidad.getText().trim(),
                     campoPaisResidencia.getText().trim()
             );
-            controller.crear(usuario);
             refrescarTabla();
             limpiarFormulario();
         } catch (Exception ex) {
@@ -117,6 +114,33 @@ public class PanelUsuarios extends JPanel {
         controller.actualizar(existente);
         refrescarTabla();
     }
+
+    private void actualizarUsuario() {
+        String id = campoId.getText().trim();
+
+        // 1. Validar que el usuario exista antes de pedir los nuevos datos
+        if (controller.buscar(id) == null) {
+            JOptionPane.showMessageDialog(this, "No existe un usuario con ese ID.");
+            return;
+        }
+
+        // 2. Capturar los nuevos datos desde los campos de texto
+        String nuevoNombre = campoNombre.getText().trim();
+        String nuevoTelefono = campoTelefono.getText().trim();
+        String nuevoCorreo = campoCorreo.getText().trim();
+
+        // 3. Delegar TODA la actualización al controlador
+        boolean exito = controller.actualizar(id, nuevoNombre, nuevoTelefono, nuevoCorreo);
+
+        if (exito) {
+            JOptionPane.showMessageDialog(this, "Usuario actualizado con éxito.");
+            refrescarTabla();
+        } else {
+            JOptionPane.showMessageDialog(this, "Error al actualizar el usuario.");
+        }
+    }
+
+
 
     private void eliminarUsuario() {
         String id = campoId.getText().trim();

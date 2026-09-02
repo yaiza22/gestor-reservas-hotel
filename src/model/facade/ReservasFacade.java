@@ -2,6 +2,9 @@ package model.facade;
 
 import model.dao.*;
 import model.entidades.*;
+import model.enums.Rol;
+import model.enums.TipoDocIdentidad;
+import model.factory.UsuarioFactory;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -18,7 +21,12 @@ public class ReservasFacade implements IReservasFacade {
     }
 
     @Override
-    public Usuario registrarUsuario(Usuario usuario) { return usuarioDAO.crear(usuario); }
+    public Usuario registrarUsuario(String tipoUsuario, String id, TipoDocIdentidad tipoDoc, String numDoc,
+                                    String nombre, String telefono, String correo, String password, Rol rol,
+                                    String nacionalidad, String paisResidencia) {
+        Usuario usuario = UsuarioFactory.crear(tipoUsuario, id, tipoDoc, numDoc, nombre, telefono, correo, password, rol, nacionalidad, paisResidencia);
+        return usuarioDAO.crear(usuario);
+    }
 
     @Override
     public Usuario buscarUsuario(String id) { return usuarioDAO.buscarPorId(id); }
