@@ -8,6 +8,6 @@ public interface UsuarioDAO {
     Usuario crear(Usuario usuario);
     Usuario buscarPorId(String id);
     List<Usuario> listarTodos();
-    boolean actualizar(Usuario usuario);
+    boolean actualizar(String id, String nombre, String telefono, String correo);
     boolean eliminar(String id);
 }

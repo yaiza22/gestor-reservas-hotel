@@ -27,9 +27,11 @@ public class UsuarioDAOMemoria implements UsuarioDAO {
     }
 
     @Override
-    public boolean actualizar(Usuario usuario) {
-        if (!almacen.containsKey(usuario.getId())) return false;
-        almacen.put(usuario.getId(), usuario);
+    public boolean actualizar(String id, String nombre, String telefono, String correo) {
+        if (!almacen.containsKey(id)) return false;
+        Usuario usuario = almacen.get(id);
+        usuario.actualizarDatos(nombre, telefono, correo);
+        almacen.put(id, usuario);
         return true;
     }
 
