@@ -35,7 +35,7 @@ public class ReservasFacade implements IReservasFacade {
     public List<Usuario> listarUsuarios() { return usuarioDAO.listarTodos(); }
 
     @Override
-    public boolean actualizarUsuario(Usuario usuario) { return usuarioDAO.actualizar(usuario); }
+    public boolean actualizarUsuario(String id, String nombre, String telefono, String correo) { return usuarioDAO.actualizar(id, nombre, telefono, correo); }
 
     @Override
     public boolean eliminarUsuario(String id) { return usuarioDAO.eliminar(id); }

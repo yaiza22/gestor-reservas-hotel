@@ -4,7 +4,6 @@ import model.entidades.Usuario;
 import model.enums.Rol;
 import model.enums.TipoDocIdentidad;
 import model.facade.IReservasFacade;
-import model.factory.UsuarioFactory;
 
 import java.util.List;
 
@@ -23,6 +22,6 @@ public class UsuarioController {
     }
     public Usuario buscar(String id) { return facade.buscarUsuario(id); }
     public List<Usuario> listar() { return facade.listarUsuarios(); }
-    public boolean actualizar(Usuario usuario) { return facade.actualizarUsuario(usuario); }
+    public boolean actualizar(String id, String nombre, String telefono, String correo) { return facade.actualizarUsuario(id, nombre, telefono, correo); }
     public boolean eliminar(String id) { return facade.eliminarUsuario(id); }
 }

@@ -14,7 +14,7 @@ public interface IReservasFacade {
                              String nacionalidad, String paisResidencia);
     Usuario buscarUsuario(String id);
     List<Usuario> listarUsuarios();
-    boolean actualizarUsuario(Usuario usuario);
+    boolean actualizarUsuario(String id, String nombre, String telefono, String correo);
     boolean eliminarUsuario(String id);
 
     // Reserva
