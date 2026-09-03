@@ -17,7 +17,7 @@ public class PanelUsuarios extends JPanel {
     private final JTable tabla;
     private final JTextField campoId = new JTextField();
     //private final JComboBox<TipoDocIdentidad> campoTipoDoc = new JComboBox<>(TipoDocIdentidad.values());
-    private JComboBox<Object> campoTipoDoc = new JComboBox<>();
+    private final JComboBox<Object> campoTipoDoc = new JComboBox<>();
     private final JTextField campoNumDoc = new JTextField();
     private final JTextField campoNombre = new JTextField();
     private final JTextField campoTelefono = new JTextField();
@@ -25,7 +25,7 @@ public class PanelUsuarios extends JPanel {
     private final JPasswordField campoPassword = new JPasswordField();
     private final JComboBox<String> campoTipoUsuario = new JComboBox<>(new String[]{"", "CLIENTE", "EMPLEADO"});
     //private final JComboBox<Rol> campoRol = new JComboBox<>(Rol.values());
-    private JComboBox<Object> campoRol = new JComboBox<>();
+    private final JComboBox<Object> campoRol = new JComboBox<>();
     private final JTextField campoNacionalidad = new JTextField();
     private final JTextField campoPaisResidencia = new JTextField();
 
@@ -156,7 +156,7 @@ public class PanelUsuarios extends JPanel {
                 limpiarFormulario(false);
             }
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, "Error al crear: " + ex.getMessage(),
+            JOptionPane.showMessageDialog(this, "Error al verificar usuario existe: " + ex.getMessage(),
                     "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -187,6 +187,7 @@ public class PanelUsuarios extends JPanel {
     private void crearUsuario() {
         try {
             if (!validarCampos("crear")) { return; }
+            if("CLIENTE".equals(campoTipoUsuario.getSelectedItem())) { campoRol.setSelectedIndex(1); }
             controller.crear((String) campoTipoUsuario.getSelectedItem(),
                     campoId.getText().trim(),
                     (TipoDocIdentidad) campoTipoDoc.getSelectedItem(),
@@ -286,7 +287,7 @@ public class PanelUsuarios extends JPanel {
                 }
 
                 if (campoTipoUsuario.getSelectedItem() == "EMPLEADO") {
-                    if (campoRol.getSelectedItem() == null || campoRol.getSelectedIndex() == -1) {
+                    if (campoRol.getSelectedItem() == null || campoRol.getSelectedIndex() <= 0) {
                         mostrarError("Debe seleccionar un rol.", campoRol);
                         return false;
                     }

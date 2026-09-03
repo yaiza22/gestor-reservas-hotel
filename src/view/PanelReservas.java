@@ -2,6 +2,7 @@ package view;
 
 import controller.*;
 import model.entidades.*;
+import model.enums.Rol;
 import model.enums.Temporada;
 
 import javax.swing.*;
@@ -12,6 +13,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
+import org.jdatepicker.impl.JDatePanelImpl;
+import org.jdatepicker.impl.JDatePickerImpl;
+import org.jdatepicker.impl.UtilDateModel;
+import javax.swing.JFormattedTextField.AbstractFormatter;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Properties;
+
 public class PanelReservas extends JPanel {
     private final ReservaController reservaController;
     private final HabitacionController habitacionController;
@@ -20,12 +30,24 @@ public class PanelReservas extends JPanel {
     private final JTextField campoId = new JTextField();
     private final JTextField campoClienteId = new JTextField();
     private final JTextField campoHabitacionesId = new JTextField();
-    private final JTextField campoFechaInicio = new JTextField("aaaa-mm-dd");
-    private final JTextField campoFechaFin = new JTextField("aaaa-mm-dd");
+    //private final JTextField campoFechaInicio = new JTextField("aaaa-mm-dd");
+    //private final JTextField campoFechaFin = new JTextField("aaaa-mm-dd");
+    private JDatePickerImpl campoFechaInicio;
+    private JDatePickerImpl campoFechaFin;
     private final JTextField campoCantHuespedes = new JTextField();
     private final DefaultListModel<String> modeloListaHabitaciones = new DefaultListModel<>();
     private final JList<String> listaHabitacionesVisual = new JList<>(modeloListaHabitaciones);
-    private final JComboBox<Temporada> campoTemporada = new JComboBox<>(Temporada.values());
+    //private final JComboBox<Temporada> campoTemporada = new JComboBox<>(Temporada.values());
+    private final JComboBox<Object> campoTemporada = new JComboBox<>();
+
+    private JButton btnCrear;
+    private JButton btnConfirmar;
+    private JButton btnCheckin;
+    private JButton btnCheckout;
+    private JButton btnCancelar;
+    private JButton btnEliminar;
+    private JButton btnAgregarHabitacion;
+    private JButton btnEliminarHabitacion;
 
     public PanelReservas(ReservaController reservaController, HabitacionController habitacionController) {
         this.reservaController = reservaController;
@@ -48,21 +70,42 @@ public class PanelReservas extends JPanel {
         JPanel panel = new JPanel(new GridLayout(0, 4, 5, 5));
         panel.setBorder(BorderFactory.createTitledBorder("Datos de la reserva"));
 
-        panel.add(new JLabel("ID (numero):"));   panel.add(campoId);
+        UtilDateModel modelInicio = new UtilDateModel();
+        Properties pInicio = new Properties();
+        pInicio.put("text.today", "Hoy");
+        pInicio.put("text.month", "Mes");
+        pInicio.put("text.year", "Año");
+        JDatePanelImpl panelFechaInicio = new JDatePanelImpl(modelInicio, pInicio);
+
+        // Asignación permitida porque estamos dentro del constructor
+        campoFechaInicio = new JDatePickerImpl(panelFechaInicio, new DateLabelFormatter());
+
+        // 3. Configurar e inicializar Fecha Fin
+        UtilDateModel modelFin = new UtilDateModel();
+        Properties pFin = new Properties();
+        pFin.put("text.today", "Hoy");
+        pFin.put("text.month", "Mes");
+        pFin.put("text.year", "Año");
+        JDatePanelImpl panelFechaFin = new JDatePanelImpl(modelFin, pFin);
+
+        // Asignación permitida
+        campoFechaFin = new JDatePickerImpl(panelFechaFin, new DateLabelFormatter());
+
+        panel.add(new JLabel("ID (número):"));   panel.add(campoId);
         panel.add(new JLabel("Cliente ID:"));    panel.add(campoClienteId);
         panel.add(new JLabel("Fecha inicio:"));  panel.add(campoFechaInicio);
         panel.add(new JLabel("Fecha fin:"));     panel.add(campoFechaFin);
         panel.add(new JLabel("Huespedes:"));     panel.add(campoCantHuespedes);
         panel.add(new JLabel("Temporada:"));     panel.add(campoTemporada);
 
-        JButton btnCrear = new JButton("Crear reserva");
-        JButton btnConfirmar = new JButton("Confirmar");
-        JButton btnCheckin = new JButton("Check-in");
-        JButton btnCheckout = new JButton("Check-out");
-        JButton btnCancelar = new JButton("Cancelar");
-        JButton btnEliminar = new JButton("Eliminar");
-        JButton btnAgregarHabitacion = new JButton("+");
-        JButton btnEliminarHabitacion = new JButton("Eliminar");
+        btnCrear = new JButton("Crear reserva");
+        btnConfirmar = new JButton("Confirmar");
+        btnCheckin = new JButton("Check-in");
+        btnCheckout = new JButton("Check-out");
+        btnCancelar = new JButton("Cancelar");
+        btnEliminar = new JButton("Eliminar");
+        btnAgregarHabitacion = new JButton("+");
+        btnEliminarHabitacion = new JButton("Eliminar");
 
 
         JPanel panelAccionesHabitacion = new JPanel(new BorderLayout(2, 0));
@@ -112,6 +155,11 @@ public class PanelReservas extends JPanel {
         panelBotones.add(btnCancelar);
         panelBotones.add(btnEliminar);
 
+        campoTemporada.addItem("-- Seleccione --");
+        for (Temporada temp : Temporada.values()) {
+            campoTemporada.addItem(temp);
+        }
+
         JPanel contenedor = new JPanel(new BorderLayout());
         contenedor.add(panel, BorderLayout.CENTER);
         contenedor.add(panelBotones, BorderLayout.SOUTH);
@@ -140,10 +188,20 @@ public class PanelReservas extends JPanel {
                 habitacionesValidadas.add(habitacion);
             }
 
+
+            // Obtener el modelo de cada campo
+            UtilDateModel modelInicio = (UtilDateModel) campoFechaInicio.getModel();
+            UtilDateModel modelFin = (UtilDateModel) campoFechaFin.getModel();
+            LocalDate fechaInicio = LocalDate.of(modelInicio.getYear(), modelInicio.getMonth() + 1, modelInicio.getDay());
+            LocalDate fechaFin = LocalDate.of(modelFin.getYear(), modelFin.getMonth() + 1, modelFin.getDay());
+
+            //LocalDate.parse(campoFechaInicio.getText().trim()),
+            //LocalDate.parse(campoFechaFin.getText().trim()),
+
             Reserva reserva = new Reserva(
                     Integer.parseInt(campoId.getText().trim()),
-                    LocalDate.parse(campoFechaInicio.getText().trim()),
-                    LocalDate.parse(campoFechaFin.getText().trim()),
+                    fechaInicio,
+                    fechaFin,
                     Integer.parseInt(campoCantHuespedes.getText().trim()),
                     (Temporada) campoTemporada.getSelectedItem(),
                     campoClienteId.getText().trim(),
@@ -195,4 +253,24 @@ public class PanelReservas extends JPanel {
                     r.getFechaInicio(), r.getFechaFin(), r.getEstado(), r.getPrecioTotal()});
         }
     }
+
+    public static class DateLabelFormatter extends AbstractFormatter {
+        private final String datePattern = "yyyy-MM-dd";
+        private final SimpleDateFormat dateFormatter = new SimpleDateFormat(datePattern);
+
+        @Override
+        public Object stringToValue(String text) throws ParseException {
+            return dateFormatter.parseObject(text);
+        }
+
+        @Override
+        public String valueToString(Object value) throws ParseException {
+            if (value != null) {
+                Calendar cal = (Calendar) value;
+                return dateFormatter.format(cal.getTime());
+            }
+            return "";
+        }
+    }
+
 }
